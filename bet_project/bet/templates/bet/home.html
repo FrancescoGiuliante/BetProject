@@ -1,0 +1,128 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Eventi</title>
+    <style>
+        .selected-bet {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+
+    {% if user %}
+        <div style="text-align: center; background-color: #e0e0e0; padding: 10px;">
+            <p>Benvenuto {{ user.name }} {{ user.lastname }}!</p>
+            <p>Saldo nel conto: {{user.credit}} euro</p>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+            <a href="{% url 'profile' %}" style="display: inline-block;">
+                <button type="button">Profilo</button>
+            </a>
+        </div>
+    {% endif %}
+
+    <div style="text-align: center;">
+        <img src="{% static 'betLogo.png' %}" alt="Bet Logo" style="max-width: 200px; height: auto;">
+    </div>
+    <h1>Eventi</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Data</th>
+                <th>Odds Home</th>
+                <th>Odds Draw</th>
+                <th>Odds Away</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>{{ event.team_home }}</td>
+                <td>{{ event.team_away }}</td>
+                <td>{{ event.date }}</td>
+                <td>
+                    <form method="POST" class="{% if bet.selected and bet.result == '1' %}selected-bet{% endif %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="event_id" value="{{ event.id }}">
+                        <input type="hidden" name="bet_type" value="home">
+                        <button type="submit">{{ event.odds1 }}</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" class="{% if bet.selected and bet.result == 'X' %}selected-bet{% endif %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="event_id" value="{{ event.id }}">
+                        <input type="hidden" name="bet_type" value="draw">
+                        <button type="submit">{{ event.oddsX }}</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" class="{% if bet.selected and bet.result == '2' %}selected-bet{% endif %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="event_id" value="{{ event.id }}">
+                        <input type="hidden" name="bet_type" value="away">
+                        <button type="submit">{{ event.odds2 }}</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="position: fixed; right: 0; top: 0; width: 300px; background-color: #f0f0f0; padding: 20px;">
+        {% if bets %}
+        <h2>Riepilogo scommesse</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Squadra di Casa</th>
+                    <th>Squadra Fuori Casa</th>
+                    <th>Pronostico</th>
+                    <th>Odds</th>
+                    <th>Rimuovi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bet in bets %}
+                <tr>
+                    <td>{{ bet.event.team_home }}</td>
+                    <td>{{ bet.event.team_away }}</td>
+                    <td>{{ bet.result }}</td>
+                    <td>
+                        {% if bet.result == '1' %}
+                            {{ bet.event.odds1 }}
+                        {% elif bet.result == 'X' %}
+                            {{ bet.event.oddsX }}
+                        {% elif bet.result == '2' %}
+                            {{ bet.event.odds2 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <button type="submit" name="remove_bet" value="{{ forloop.counter0 }}">Rimuovi</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <form method="POST" action="{% url 'play_bet' %}">
+            {% csrf_token %}
+            <input type="number" name="stake" value="2" min="2">
+            <button type="submit">Gioca schedina</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>

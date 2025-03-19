@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrazione</title>
+</head>
+<body>
+    <div style="text-align: center;">
+        <img src="{% static 'betLogo.png' %}" alt="Bet Logo" style="max-width: 200px; height: auto;">
+    </div>
+    <h2>Registrati</h2>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <h3>Informazioni Personali</h3>
+        {{ user_form.as_p }}  
+        
+        <h3>Credenziali</h3>
+        {{ credential_form.as_p }} 
+
+        <button type="submit">Registrati</button>
+    </form>
+</body>
+</html>

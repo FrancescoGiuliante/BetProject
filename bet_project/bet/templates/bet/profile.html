@@ -1,0 +1,77 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilo</title>
+</head>
+<body>
+    <div style="text-align: center;">
+        <img src="{% static 'betLogo.png' %}" alt="Bet Logo" style="max-width: 200px; height: auto;">
+    </div>
+    <h1>Profilo Utente</h1>
+
+    {% if user %}
+        <p>Nome: {{ user.name }}</p>
+        <p>Cognome: {{ user.lastname }}</p>
+        <p>Credito: {{ user.credit }}</p>
+    {% endif %}
+    <a href="{% url 'home' %}">Torna alla Home</a>
+
+    <h2>Dettagli Scommesse</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Betslip ID</th>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>User Lastname</th>
+                <th>Betslip Stake</th>
+                <th>Betslip Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for betslip in betslips %}
+                <tr>
+                    <td>{{ betslip.0 }}</td>
+                    <td>{{ betslip.1 }}</td>
+                    <td>{{ betslip.2 }}</td>
+                    <td>{{ betslip.3 }}</td>
+                    <td>{{ betslip.4 }}</td>
+                    <td>{{ betslip.6 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Riepilogo Eventi</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Event ID</th>
+                <th>Team Home</th>
+                <th>Team Away</th>
+                <th>Event Date</th>
+                <th>Total Bets</th>
+                <th>Total Stake</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_summary %}
+                <tr>
+                    <td>{{ event.0 }}</td>
+                    <td>{{ event.1 }}</td>
+                    <td>{{ event.2 }}</td>
+                    <td>{{ event.3 }}</td>
+                    <td>{{ event.4 }}</td>
+                    <td>{{ event.5 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'home' %}">Torna alla Home</a>
+</body>
+</html>

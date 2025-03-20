@@ -23,12 +23,10 @@ def reset_future_event_results():
         today = date.today()
         today_str = today.strftime('%Y-%m-%d')  
 
-        # Seleziona gli eventi con data maggiore o uguale a oggi
         select_query = "SELECT id FROM bet_event WHERE date >= %s"
         cur.execute(select_query, (today_str,))
         events = cur.fetchall()
 
-        # Aggiorna il risultato di ogni evento a '?'
         for event in events:
             event_id = event[0]
             update_query = "UPDATE bet_event SET result = '?' WHERE id = %s"

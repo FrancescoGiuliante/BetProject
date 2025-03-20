@@ -19,7 +19,6 @@ def drop_triggers_and_functions():
         )
         cursor = conn.cursor()
 
-        # Elimino prima i trigger
         drop_triggers = [
             "DROP TRIGGER IF EXISTS trg_reduce_user_credit_on_betslip ON bet_betslip;",
             "DROP TRIGGER IF EXISTS trg_update_bet_result_on_event_conclusion ON bet_event;",
@@ -30,7 +29,6 @@ def drop_triggers_and_functions():
         for query in drop_triggers:
             cursor.execute(query)
 
-        # Elimino le funzioni dopo aver rimosso i trigger
         drop_functions = [
             "DROP FUNCTION IF EXISTS reduce_user_credit_on_betslip() CASCADE;",
             "DROP FUNCTION IF EXISTS update_bet_result_on_event_conclusion() CASCADE;",
@@ -41,7 +39,6 @@ def drop_triggers_and_functions():
         for query in drop_functions:
             cursor.execute(query)
 
-        # Elimino anche le view
         drop_views = [
             "DROP VIEW IF EXISTS betslip_details;",
             "DROP VIEW IF EXISTS event_bet_summary;"

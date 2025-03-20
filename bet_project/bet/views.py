@@ -72,7 +72,7 @@ def play_bet(request):
             return HttpResponse("Nessuna scommessa selezionata.")
 
         total_odds = Decimal('1.00')
-        # Calcoliamo le odds totali
+        # odds totali
         for bet_data in bets_data:
             event = Event.objects.get(id=bet_data['event_id'])
             if bet_data['result'] == ResultEnum.HOME_WIN.value:
@@ -82,19 +82,18 @@ def play_bet(request):
             elif bet_data['result'] == ResultEnum.AWAY_WIN.value:
                 total_odds *= Decimal(event.odds2)
 
-        # Calcoliamo la potenziale vincita
+        # potenziale vincita
         potential_win = stake * total_odds
 
         try:
-            # Creiamo la BetSlip
+            # BetSlip
             bet_slip = BetSlip.objects.create(
                 user=user,
                 stake=stake,
                 status=BetUserStatusEnum.PENDING.value,
-                potential_win=potential_win  # Assegniamo il valore calcolato a 'potential_win'
+                potential_win=potential_win 
             )
 
-            # Creiamo le bet associate alla betslip
             for bet_data in bets_data:
                 event = Event.objects.get(id=bet_data['event_id'])
                 bet = Bet.objects.create(
@@ -102,11 +101,10 @@ def play_bet(request):
                     result=bet_data['result'],
                     stake=stake,
                     status=BetStatusEnum.PENDING.value,
-                    betslip=bet_slip  # Associare la bet alla betslip
+                    betslip=bet_slip 
                 )
-                bet_slip.bets.add(bet)  # Aggiungi la bet alla betslip tramite il ManyToMany
+                bet_slip.bets.add(bet)  
 
-            # Rimuoviamo le scommesse dalla sessione
             del request.session['bets']
             return redirect('bet_success')
 
@@ -116,7 +114,6 @@ def play_bet(request):
             else:
                 return HttpResponse(f"Errore inaspettato: {e}")
 
-    # Caso quando l'utente sta visualizzando la conferma della scommessa (POST senza 'confirm_bet')
     elif request.method == 'POST':
         bets_data = request.session.get('bets', [])
         stake = Decimal(request.POST.get('stake', '0.00'))
